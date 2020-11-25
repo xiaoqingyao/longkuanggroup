@@ -1,0 +1,491 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>龙矿集团安全生产移动综合互联平台</title>
+    <link rel="stylesheet" type="text/css" href="./index.css">
+    <link rel="stylesheet" type="text/css" href="./animate.min.css">
+
+    <script src="Scripts/jquery.min.js"></script>
+    <script src="Scripts/jquery-3.3.1.min.js"></script>
+    <script src="Scripts/layer/layer.js"></script>
+    <script src="Scripts/echarts.min.js"></script>
+    <script src="Scripts/jq_scroll.js"></script>
+
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/config.js"></script>
+    <script src="Scripts/dateHelper.js"></script>
+
+    <script>
+        function fixedToRefresh() {
+            var dt = new Date();
+            var curHour = dt.getHours();
+            var minutes = dt.getMinutes();
+
+            if (minutes == 0 && (curHour == 0 || curHour == 12 || curHour == 13 || curHour == 24 || curHour == 6 || curHour == 18)) {
+                window.location.reload();
+            }
+        }
+        /*获取今天的时间*/
+        $(function () {
+            //定时刷新
+            setInterval(fixedToRefresh, 58000);
+
+            function show() {
+                var mydate = new Date();
+                var str = "" + mydate.getFullYear() + "年";
+                str += (mydate.getMonth() + 1) + "月";
+                str += mydate.getDate() + "日";
+
+                var curHour = mydate.getHours();      //获取当前小时数(0-23)
+                var curMinute = mydate.getMinutes();   // 获取当前分钟数(0-59)
+                var curSec = mydate.getSeconds();      //获取当前秒数(0-59)
+                if (curHour <= 9) {
+                    curHour = '0' + curHour;
+                }
+                if (curSec <= 9) {
+                    curSec = '0' + curSec;
+                }
+                if (curMinute <= 9) {
+                    curMinute = '0' + curMinute;
+                }
+                str += ' ' + curHour + ':' + curMinute + ':' + curSec;
+                return str;
+
+            }
+            function setDateText() {
+                $(".date").html(show())
+            }
+
+            $(document).ready(function () {
+                setInterval(setDateText, 1000);
+            });
+        });
+
+        /*文字滚动*/
+        $(function () {
+            $(".line").slideUp(); //文字滚动
+
+            //关闭窗口
+            $(".tip-close").click(function () {
+                $(".tipbox").animate({
+                    width: '0',
+                    opacity: '0',
+                    left: '0'
+                }, "slow");
+                $(".ico-tip").show(1500);
+            });
+        });
+
+        (function ($) {
+            $.fn.extend({
+                "slideUp": function (value) {
+
+                    var docthis = this;
+                    //默认参数
+                    value = $.extend({
+                        "li_h": "25", //上移距离
+                        "time": 3000, //间隔时间
+                        "movetime": 1000 //过渡时间
+                    }, value)
+
+                    //向上滑动动画
+                    function autoani() {
+                        $("li:first", docthis).animate({
+                            "margin-top": -value.li_h
+                        }, value.movetime, function () {
+                            $(this).css("margin-top", 0).appendTo(".line");
+                        })
+                    }
+
+                    //自动间隔时间向上滑动
+                    var anifun = setInterval(autoani, value.time);
+
+                    //悬停时停止滑动，离开时继续执行
+                    $(docthis).children("li").hover(function () {
+                        clearInterval(anifun); //清除自动滑动动画
+                    }, function () {
+                        anifun = setInterval(autoani, value.time); //继续执行动画
+                    })
+                }
+            })
+        })(jQuery)
+
+        /*值班领导文字滚动*/
+        $(function () {
+            $(".line2").slideUp2(); //文字滚动
+
+        });
+
+        (function ($) {
+            $.fn.extend({
+                "slideUp2": function (value) {
+
+                    var docthis = this;
+                    //默认参数
+                    value = $.extend({
+                        "li_h": "123.75", //上移距离
+                        "time": 3000, //间隔时间
+                        "movetime": 3000 //过渡时间
+                    }, value)
+
+                    //向上滑动动画
+                    function autoani() {
+                        $("li:first", docthis).animate({
+                            "margin-top": -value.li_h
+                        }, value.movetime, function () {
+                            $(this).css("margin-top", 0).appendTo(".line2");
+                        })
+                    }
+
+                    //自动间隔时间向上滑动
+                    var anifun = setInterval(autoani, value.time);
+
+                    //悬停时停止滑动，离开时继续执行
+                    $(docthis).children("li").hover(function () {
+                        clearInterval(anifun); //清除自动滑动动画
+                    }, function () {
+                        anifun = setInterval(autoani, value.time); //继续执行动画
+                    })
+                }
+            })
+        })(jQuery)
+
+        $(document).ready(function () {
+            $("#scrollDiv").Scroll({ line: 1, speed: 500, timer: 3000, up: "but_up", down: "but_down" });
+        });
+
+        $(function () {
+            //产量 销量 库存
+            $.ajax({
+                url: httpIP + "CariLongKouAttemper/api/screen/GetCurrentCoalDataByDate?mineCode=0&date=" + getTargetDate(0, '-'),
+                //contentType: "text/plain",
+                dataType: "JSON",
+                headers: {
+                    "userid": $.cookie('user_token')
+                },
+                type: "GET",
+                async: false,
+                success: function (data) {
+
+                    $("#cl").html(Math.round(data.productionAmount / 10000));
+                    $("#xl").html(Math.round(data.salesAmount / 10000));
+                    $("#kc").html(Math.round(data.stockAmount / 10000));
+
+                }, error: function (e) {
+                    alert(e.responseText);
+                    //var res = $.parseJSON(e.responseText);
+                    //layer.msg(res.ExceptionMessage);
+                }
+            });
+
+            //值班领导
+            $.ajax({
+                url: httpIP + "CariLongKouAttemper/api/screen/GetDutyInfo?mineCode=0&dateTime=" + getCurrentDate(),
+                //contentType: "text/plain",
+                dataType: "JSON",
+                headers: {
+                    "userid": $.cookie('user_token')
+                },
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    //集团领导
+                    $("#zbld").html(data.dutyLeader + ',' + data.dutyGrouper);
+                    //$("#zbzcy").html();
+
+                    //$("#kuang1").html("<td>" + data.mineDutyList[0].mineName + "：</td><td style='color:white'>" + data.mineDutyList[0].dutyLeader + "</td><td style='width:280px;'></td>");
+                    //$("#kuang2").html("<td>" + data.mineDutyList[1].mineName + "：</td><td style='color:white'>" + data.mineDutyList[1].dutyLeader + "</td><td style='width:280px;'></td>");
+                    //$("#kuang3").html("<td>" + data.mineDutyList[2].mineName + "：</td><td style='color:white'>" + data.mineDutyList[2].dutyLeader + "</td><td style='width:280px;'></td>");
+                    //$("#kuang4").html("<td>" + data.mineDutyList[3].mineName + "：</td><td style='color:white'>" + data.mineDutyList[3].dutyLeader + "</td><td style='width:280px;'></td>");
+                    var eveMinLeaderHtml = "";
+                    for (var i = 0; i < data.mineDutyList.length; i++) {
+                        if (i % 2 == 0) {
+                            var col2mineName = "";//第二列的矿名
+                            var col2dutyLeader = "";//第二列的值班领导
+                            if (data.mineDutyList[i + 1]) {
+                                col2mineName = data.mineDutyList[i + 1].mineName + "：";
+                                col2dutyLeader = data.mineDutyList[i + 1].dutyLeader;
+                            }
+                            eveMinLeaderHtml += "<tr><td>" + data.mineDutyList[i].mineName + "：" + "</td><td style='color:white'>" + data.mineDutyList[i].dutyLeader + "</td><td>" + col2mineName + "</td><td style='color:white'>" + col2dutyLeader + "</td></tr>";
+                        }
+
+                        //eveMinLeaderHtml += "<li>" + data.mineDutyList[i].mineName+"</li>";
+                        //eveMinLeaderHtml += "<li>值班领导：" + data.mineDutyList[i].dutyLeader+"</li>";
+                        //eveMinLeaderHtml += "<li>带班领导：" + data.mineDutyList[i].shiftLeader+"</li>";
+                        //eveMinLeaderHtml += "<li>跟班人员：" + data.mineDutyList[i].dutyGrouper+"</li>";
+                    }
+                    $("#otherLeaders").html(eveMinLeaderHtml);
+                }, error: function (e) {
+                    alert(e.responseText);
+                    //var res = $.parseJSON(e.responseText);
+                    //layer.msg(res.ExceptionMessage);
+                }
+            });
+            //消息通知
+            $.ajax({
+                url: httpIP + "/SafetyNet2WebApi/api/common/Notifications",
+                dataType: "JSON",
+                headers: {
+                    "userid": $.cookie('user_token')
+                },
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    var inHtml = "";
+                    //<li style="margin-top: -1.79788px;"><a>关于科级及以下管理人员“三考一评”能力考试补考的通知</a></li>
+                    //    <li style="margin-top: 0px;"><a>转发山东能源安传（2019）81号文件认真做好地质灾害防治工作的通知</a></li>
+                    //    <li style="margin-top: 0px;"><a>转发鲁煤监政法[2019]36号《山东煤矿双重预防机制建设持续推进工作方案》的通知</a></li>
+                    for (var i = 0; i < data.Data.length; i++) {
+                        if (i == 0) {
+                            inHtml += "<li style=\"margin-top: -1.79788px;\"><a href='" + data.Data[i].Path + "' target='_blank'>" + data.Data[i].Title + "</a></li>";
+                        } else {
+                            inHtml += "<li><a href='" + data.Data[i].Path + "'  target='_blank'>" + data.Data[i].Title + "</a></li>";
+                        }
+                    }
+                    $("#message").append(inHtml);
+                }, error: function (e) {
+                    alert(e.responseText);
+                }
+            });
+            $("#toWideScreenDiv").mouseover(function () {
+                $("#toWideScreenA").show();
+                $("#toReturn").show();
+
+            });
+            $("#toWideScreenDiv").mouseout(function () {
+                $("#toWideScreenA").hide();
+                $("#toReturn").hide();
+            });
+        });
+
+
+    </script>
+</head>
+
+
+<body>
+    <div class="longk">
+        <div class="title">
+            <!--天气-->
+
+            <div class="weather">
+                <span class="date"></span>&nbsp;
+                <iframe allowtransparency="true" frameborder="0" width="180" height="36" scrolling="no"
+                        src="http://tianqi.2345.com/plugin/widget/index.htm?s=3&z=2&t=0&v=0&d=3&bd=0&k=&f=ffffff&ltf=009944&htf=cc0000&q=1&e=1&a=0&c=60488&w=180&h=36&align=center"></iframe>
+            </div>
+            <i class="logo"></i>龙矿集团安全生产云平台
+            <!--新闻滚动-->
+            <div class="tipbox">
+                <i class="ico-notice"></i>
+                <div class="cont">
+                    <ul class="line" id="message"></ul>
+                </div>
+            </div>
+            <div style="float:right;position:absolute;right: 12px;top: 24px;width: 71px; height: 50px;" id="toWideScreenDiv">
+                <a style="color:white;font-size: 21px;display: none;" id="toWideScreenA" href="../screen3/index.html">宽屏版</a>
+                <a style="color:white;font-size: 21px;display: none;" id="toReturn" href="../../../../CariWeb/Main.aspx?v=347.2768">返回</a>
+            </div>
+        </div>
+
+        <div class="main" style="padding: 0;">
+            <!--左边列-->
+            <div class="left animated slideInLeft">
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon1"></i>产量销量对比</br><em><!--Output and sales--></em></div>
+                    <div>
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./产量销量对比.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="340"></iframe>
+                        <!-- <img src="./images/pic02.png" width="350"
+                            style="width:432px; height:290px;display: block;margin: 5px auto;" /> -->
+
+                    </div>
+                </div>
+
+                <div class="part part1" style="height:320px">
+                    <div class="part-title">
+                        <i class="icon icon2"></i>托管矿井产量
+                        </br><em><!--Output Of Coal--></em>
+                    </div>
+                    <div>
+                        <iframe name="frame2" id="frame2" width="100%" scrolling="no" src="./托管矿井产量.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="340"></iframe>
+                        <!-- <img src="Content/images/pic03.png" width="350"
+                            style="width:468px; height:200px;display: block;margin: 30px auto;" /> -->
+                    </div>
+                </div>
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon3"></i>煤炭库存</br><em><!--Output Of Coal--></em></div>
+                    <div>
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./煤炭产量.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="340"></iframe>
+                        <!--<img src="Content/images/pic04.png" width="350"
+                            style="width:432px; height:294px;display: block;margin: 20px auto;" />-->
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!--中间列-->
+            <div class="middle part">
+                <!--地区分布图-->
+                <div class="part3">
+                    <div class="part-title map-title animated slideInDown"><i class="icon icon8"></i><!--矿厂分布图--></br><em><!--Map--></em></div>
+                    <!--数据-->
+                    <div class="map-data animated slideInDown">
+                        <ul class="data-ul">
+                            <li><span class="data-title">煤炭产量</span><span><label id="cl">569</label><i>万吨</i></span></li>
+                            <li><span class="data-title">煤炭销量</span><span><label id="xl">569</label><i>万吨</i></span></li>
+                            <li><span class="data-title">煤炭库存</span><span><label id="kc">569</label><i>万吨</i></span></li>
+                        </ul>
+                    </div>
+                    <!--颜色提示-->
+                    <div class="map-tip animated slideInLeft">
+                        <ul>
+                            <li><i class="red">红色</i><span>网络中断</span></li>
+                            <li><i class="orange">橙色</i><span>通讯报警</span></li>
+                            <!--<li><i class="yellow">黄色</i><span>通讯故障</span></li>-->
+                            <li><i class="green">绿色</i><span>通讯正常</span></li>
+                        </ul>
+                    </div>
+                    <!--地图展示-->
+                    <div class="map animated slideInRight">
+                        <span class="name name1">山西</span>
+                        <span class="name name2">山东</span>
+                        <span class="kname1 kname"><i class="pulse animated infinite" id="m10702003"></i><a href="../screen2/index.html?MineCode=10702003" style="color:white;color:white;position: absolute;width: 100px;left: -30px;top: -33px;">大恒煤业</a></span>
+                        <span class="kname2 kname"><i class="pulse animated infinite" id="m10702029"></i><a href="../screen2/index.html?MineCode=10702029" style="color:white;color:white;position: absolute;width: 100px;left: -30px;">望田煤业</a></span>
+                        <span class="kname3 kname"><i class="pulse animated infinite" id="m10702001" style="left: -53px;"></i><a href="../screen2/index.html?MineCode=10702001" style="color:white;color:white;position: absolute;left: -124px;">梁家煤矿</a></span>
+                        <span class="kname4 kname"><i class="pulse animated infinite" id="m10702028"></i><a href="../screen2/index.html?MineCode=10702028" style="color:white;color:white;position: absolute;left: -27px;top: 6px;width: 100px;">李楼煤业</a></span>
+                    </div>
+
+                    <!--收入和利润占比-->
+                    <div class="chart1 animated slideInLeft" style="height:260px;width: 410px">
+                        <div class="ctitle">
+                            <i class="icon icon9"></i>收入<!--和利润-->占比
+                            </br><em><!--Income--> <!--and Profit--></em>
+                        </div>
+
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./收入和利润占比.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="220"></iframe>
+                        <!-- <img src="Content/images/pic01.png" width="350" style="width:350px; height:168px;display: block;" /> -->
+                    </div>
+                </div>
+
+                <!--底部-->
+                <div class="part part1 animated slideInLeft">
+                    <div class="part-title">
+                        <i class="icon icon4"></i>开机率
+                        </br><em><!--Turn-on Ratio--></em>
+                    </div>
+                    <div>
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./开机率.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="340"></iframe>
+                        <!-- <img src="Content/images/pic05.png" width="350"
+                            style="width:434px; height:273px;display: block;margin: 20px auto;" /> -->
+
+                    </div>
+                </div>
+                <div class="part part1 animated slideInRight">
+                    <div class="part-title"><i class="icon icon5"></i>矿井井下工作人数</br><em><!--Number Of Underground Workers--></em></div>
+                    <div>
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./井下工作人员.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="340"></iframe>
+                        <!-- <img src="Content/images/pic06.png" width="350"
+                            style="width:394px; height:167px;display: block;margin: 20px auto;" /> -->
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!--右边列-->
+            <div class="right animated slideInRight">
+                <div class="part part1" style="height:320px">
+                    <div class="part-title" style="height:30px">
+                        <i class="icon icon10"></i>值班领导
+                        </br><em><!--Duty Leader--></em>
+                    </div>
+                    <div class="part-title" style="padding: 0;height: 20px;"><span>集团公司值班领导</span></div>
+                    <div class="part-title">
+
+                        <ul class="pcont">
+                            <li id="zbld"></li>
+                            <!--<li id="zbzcy"></li>-->
+                        </ul>
+
+                    </div>
+                    <div class="part-title" style="padding: 0;height: 20px;"><span>各单位值班领导</span></div>
+                    <div class="part-title">
+                        <table style="width: 100%;  float: left;    margin-left: 10px;    font-size: 14px;" cellpadding="0">
+                            <!--<tr id="kuang1"></tr>
+                            <tr id="kuang2"></tr>
+                            <tr id="kuang3"></tr>
+                            <tr id="kuang4"></tr>-->
+                            <tbody id="otherLeaders"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon6"></i>热电单位</br><em><!--Thermoelectricity--></em></div>
+                    <div>
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./热电单位.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="340"></iframe>
+                        <!--<img src="Content/images/pic07.png" width="350"
+                            style="width:432px; height:296px;display: block;margin: 20px auto;" />-->
+
+                    </div>
+                </div>
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon7"></i>水泥、空分、液氮</br><em><!--Comprehensive--></em></div>
+                    <div style="padding:20px 0 0">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./水泥空分发电量.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="340"></iframe>
+                        <!--<img src="Content/images/pic08.png" width="350"
+                            style="width:415px; height:306px;display: block;margin: 20px auto;" />-->
+
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function ShowMineStatus() {
+            var code = 1;
+            $.ajax({
+                url: httpIP + "api/api/RealNetState",
+                dataType: "JSON",
+                headers: {
+                    "userid": $.cookie('user_token')
+                },
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    for (var i = 0; i < data.Data.length; i++) {
+                        var className = "";
+                        var rel = data.Data[i];
+                        if (rel.State == 0) {
+                            className = "shake2";
+                        } else if (rel.State == 1) {
+                            className = "shake3";
+                        }
+                        else if (rel.State == 2) {
+                            className = "shake4";
+                        }
+                        $("#m" + rel.MineCode).addClass(className);
+                    }
+                }, error: function (e) {
+                    console.log(e.responseText);
+                }
+            });
+        }
+        ShowMineStatus();
+                        //setInterval("ShowMineStatus()", 5000);
+    </script>
+</body>
+
+</html>

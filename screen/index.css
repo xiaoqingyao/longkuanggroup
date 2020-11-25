@@ -1,0 +1,599 @@
+﻿@charset "utf-8";
+/* CSS Document */
+html, body, div, span, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, address, big, cite, code, del, em, font, img, ins, small, strong, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend {
+    margin: 0;
+    padding: 0;
+}
+
+ol, ul, li, lu li {
+    list-style: none;
+}
+
+img {
+    border: 0;
+}
+/*html5*/
+article, aside, dialog, footer, header, section, footer, nav, figure, menu {
+    display: block;
+}
+
+body {
+    margin: 0 auto;
+    font-family: "微软雅黑", "Microsoft YAhei","Arial","Lucida","Verdana","Helvetica", "sans-serif", "宋体";
+    font-size: 14px;
+    line-height: 22px;
+    text-align: center;
+    position: relative;
+    color: #FFF;
+}
+
+a {
+    text-decoration: none;
+    cursor: pointer;
+    font-size:22px;
+}
+
+h1, h2, h3, h4, h5, i {
+    font-weight: normal;
+    font-style: inherit;
+}
+
+i {
+    display: inline-block;
+}
+
+img {
+    width: 100%;
+    vertical-align: middle;
+}
+/*页面宽高限制*/
+body {
+    width: 1920px;
+    height: 1200px;
+}
+
+.longk {
+    width: 1920px;
+    height: 1200px;
+    background: url(Content/images/bg.jpg) no-repeat top;
+    background-size: cover;
+    background-position: center;
+}
+
+.title {
+    font-size: 34px;
+    line-height: 40px;
+    padding: 30px 0 10px;
+    font-family: "幼圆";
+    color: #d1def3;
+    background: url(Content/images/title-bg.png) no-repeat top;
+}
+
+    .title .logo {
+        background: url(Content/images/logo.png) no-repeat;
+        width: 60px;
+        height: 60px;
+        vertical-align: middle;
+        margin-right: 15px;
+    }
+
+.longk {
+    /* background: rgba(255,255,255,.1); */
+}
+
+.main {
+    /* border: 3px solid #1a82fb; */
+    border-radius: 5px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 0 20px 0;
+    overflow: hidden;
+}
+
+    .main .left {
+        width: 510px;
+        float: left;
+    }
+
+    .main .right {
+        width: 510px;
+        float: right;
+    }
+
+.part {
+    width: 510px;
+    height: 350px;
+    background-size: 100% 100%;
+    /* border: 2px solid #4574d6; */
+    position: relative;
+    /* box-shadow: inset 0px 0px 28px 5px rgba(33,89,232,.3); */
+    float: left;
+    margin: 15px 0 0 15px;
+    /* background: url(./images/part-bor-bg.png) no-repeat center;
+    background-size: 100% 100%; */
+}
+
+    .part .part-title {
+        height: 10px;
+        line-height: 30px;
+        /* box-shadow: inset 0 30px rgba(33,89,232,.3); */
+        text-align: left;
+        padding: 0 10px;
+        color: #abcbff;
+        font-size: 20px;
+        padding-left: 28px;
+    }
+    .part .part-title em {
+        font-style: normal;
+    font-size: 14px;
+    }
+
+        .part .part-title .red {
+            color: #dd5a60;
+            font-size: 12px;
+        }
+
+.part2 {
+    /* height: 235px; */
+}
+
+.listbox {
+    padding: 10px 5px;
+    overflow: hidden;
+    clear: both;
+}
+
+    .listbox .list {
+        overflow: hidden;
+        box-shadow: inset 0px 0px 28px 5px rgba(33,89,232,.3);
+        height: 210px;
+    }
+
+        .listbox .list .list-title {
+            background-color: #1c39a9;
+            line-height: 30px;
+            height: 30px;
+            font-size: 16px;
+        }
+
+            .listbox .list .list-title span {
+                color: #FFF;
+            }
+
+        .listbox .list li {
+            line-height: 30px;
+            height: 30px;
+        }
+
+            .listbox .list li span {
+                float: left;
+                width: 19%;
+                border-right: 1px solid #3a4566;
+                color: #cccccc;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                font-size: 12px;
+            }
+
+                .listbox .list li span:last-child {
+                    border: 0px none;
+                }
+
+    .listbox .list-worn li span {
+        width: 16.2%;
+    }
+
+    .listbox .list li .color1 {
+        color: red;
+    }
+
+    .listbox .list-worn li .width1 {
+        width: 22%;
+    }
+
+    .listbox .list li .width2 {
+        width: 10%;
+    }
+
+    .listbox .list li .more {
+        width: 10%;
+    }
+
+        .listbox .list li .more:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+/*地图*/
+.part3 {
+    width: 890px;
+    height: 705px;
+    background: url(Content/images/map-bg.png) no-repeat center;
+    background-size: 100% 100%;
+    position: relative;
+}
+
+.map {
+    background: url(Content/images/part-map.png) no-repeat top;
+    background-size: 99% 94%;
+    width: 430px;
+    height: 370px;
+    position: absolute;
+    right: 30px;
+    top: 150px;
+}
+
+.part3 .map-title {
+    text-align: left;
+    margin: 0px 0px 0 100px;
+    padding-top: 25px;
+	margin-left:50px;
+}
+
+.map-tip {
+    position: absolute;
+    top: 205px;
+    left: 85px;
+    font-size: 18px;
+    line-height: 32px;
+}
+
+    .map-tip ul {
+        border: 1px solid #3c6eda;
+    }
+
+        .map-tip ul li {
+            border-bottom: 1px solid #3c6eda;
+        }
+
+    .map-tip i {
+        width: 55px;
+        border-right: 1px solid #3c6eda;
+        float: left;
+    }
+
+    .map-tip span {
+        padding: 5px 10px;
+    }
+
+    .map-tip .red {
+        color: #d01864;
+    }
+
+    .map-tip .orange {
+        color: #ce8f08;
+    }
+
+    .map-tip .yellow {
+        color: #f2f832;
+    }
+
+    .map-tip .green {
+        color: #02ee2d;
+    }
+
+.map .kname1 {
+    position: absolute;
+    left: 0%;
+    top: 35%;
+}
+
+.map .shake1 {
+    background: url(Content/images/location.png) no-repeat top;
+}
+
+.map .shake2 {
+    background: url(Content/images/location2.png) no-repeat top;
+}
+
+.map .shake3 {
+    background: url(Content/images/location3.png) no-repeat top;
+}
+
+.map .shake4 {
+    background: url(Content/images/location4.png) no-repeat top;
+}
+
+.map .shake {
+    background: url(Content/images/shake1.gif) no-repeat top;
+}
+
+.map .kname i {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: -35px;
+    left:35px;
+    background-size: 60% !important;
+}
+
+.map .kname2 {
+    position: absolute;
+    left: -50px;
+    top: 48%;
+}
+
+.map .kname3 {
+    position: absolute;
+    right: 20%;
+    top: 56%;
+}
+
+.map .kname4 {
+    position: absolute;
+    left: 35%;
+    bottom: 25%;
+}
+
+text {
+    fill: #fff !important;
+}
+
+.map .name {
+    color: #0a0a67;
+    font-size: 24px;
+    position: absolute;
+    font-weight:;
+}
+
+.map .name1 {
+    left: 15%;
+    bottom: 38%;
+}
+
+.map .name2 {
+    right: 26%;
+    bottom: 25%;
+}
+
+.map-data {
+    color: #1bede1;
+    margin-left: 65px;
+}
+
+    .map-data .data-ul {
+        overflow: hidden;
+    }
+
+        .map-data .data-ul li {
+            float: left;
+            font-size: 30px;
+            margin: 30px 15px;
+            background: rgba(29,116,208,.3);
+            border-radius: 3px;
+            padding: 8px 25px;
+            border:solid;
+        }
+
+            .map-data .data-ul li .data-title {
+                color: #FFF;
+                font-size: 18px;
+                padding: 0 0 12px 0;
+            }
+
+            .map-data .data-ul li i {
+                font-size: 14px;
+                margin-left: 3px;
+            }
+
+            .map-data .data-ul li span {
+                display: block;
+                font-weight: 600;
+            }
+
+/*主要工作*/
+.height1 {
+    height: 210px;
+}
+
+.work .list li span {
+    float: left;
+    width: 22%;
+    border-right: 0px none;
+    color: #cccccc;
+    white-space: normal;
+    text-overflow: inherit;
+    overflow: initial;
+}
+
+.work .list li .cont {
+    width: 54%;
+    text-align: left;
+    padding-left: 2%;
+    line-height: 26px;
+}
+
+.work .list li {
+    border-bottom: 1px dashed #4e4f52;
+    height: auto;
+    overflow: hidden;
+}
+
+    .work .list li:first-child {
+        border: 0px none;
+    }
+
+.weather {
+    font-size: 16px;
+    position: absolute;
+    left: 50px;
+    top: 30px;
+    font-family: "Microsoft Yahei";
+}
+
+.date {
+    float: left;
+}
+/*文字滚动*/
+.tipbox {
+    float: right;
+    position: absolute;
+    right: 86px;
+    top: 30px;
+    font-size: 14px;
+    background-color: inherit;
+    padding: 5px 15px;
+    border-radius: 2px;
+}
+
+.ico-notice {
+    background: url(Content/images/ico-notice.png) no-repeat 0 5px;
+    background-size: 100%;
+    width: 22px;
+    height: 30px;
+    display: inline-block;
+    float: left;
+}
+
+.line {
+    overflow: hidden;
+    height: 30px;
+}
+
+    .line li {
+        min-height: 40px;
+    }
+
+        .line li a {
+            line-height: 30px;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: block;
+			 color:white;
+            font-size:16px;
+			text-align:left;
+        }
+
+.ico-tip {
+    top: 0;
+    z-index: 999;
+    left: 5px;
+    background: url(Content/images/ico-tip.png) no-repeat;
+    background-size: 100%;
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    float: left;
+    position: absolute;
+}
+
+/*标题图标*/
+.icon {
+    width: 19px;
+    height: 19px;
+    vertical-align: middle;
+    margin-right: 8px;
+    background-size: 100% !important;
+    position: absolute;
+    left: 0;
+    top: 6px;
+}
+
+.icon1 {
+    background: url(Content/images/icon1.png) no-repeat;
+    background-size: 100%;
+}
+
+.icon2 {
+    background: url(Content/images/icon2.png) no-repeat;
+}
+
+.icon3 {
+    background: url(Content/images/icon3.png) no-repeat;
+}
+
+.icon4 {
+    background: url(Content/images/icon4.png) no-repeat;
+}
+
+.icon5 {
+    background: url(Content/images/icon5.png) no-repeat;
+}
+
+.icon6 {
+    background: url(Content/images/icon6.png) no-repeat;
+}
+
+.icon7 {
+    background: url(Content/images/icon7.png) no-repeat;
+}
+
+.icon8 {
+    background: url(Content/images/icon8.png) no-repeat;
+    top:26px
+}
+.icon9 {
+    background: url(Content/images/icon9.png) no-repeat;
+}
+.icon10 {
+    background: url(Content/images/icon10.png) no-repeat;
+}
+
+/*底部两个*/
+.middle {
+    width: 880px;
+    float: left;
+    overflow: hidden;
+    height: inherit;
+    margin-top: 0;
+    margin-left: 20px;
+}
+
+    .middle .part1 {
+        width: 410px;
+    }
+
+/*收入和利润占比*/
+.chart1 {
+    position: absolute;
+    left: 60px;
+    bottom: 10px;
+}
+
+    .chart1 .ctitle {
+        color: #abcbff;
+        font-size: 20px;
+        text-align: left;
+        padding-left: 50px;
+    }
+        .chart1 .ctitle em {
+            font-style: normal;
+            font-size: 14px;
+        }
+        .chart1 .ctitle .icon {
+            left: 20px
+        }
+.pcont {
+    width: 100%;
+    float: left;
+    /* margin: 0 5px; */
+    font-size: 16px;
+    text-align: left;
+    margin-left: 52px;
+}
+
+    .pcont li {
+        margin: 12px -40px;
+        font-size:18px;
+    }
+
+.part .part-title span {
+ 
+    margin: 0 5px;
+    float: left;
+    text-align: center;
+    color: #b7dff7;
+    line-height: 30px;
+    height: 30px;
+    font-size: 18px;
+}
+
+.right .part {
+    margin-left: 8px;
+}
+
+#datebtn {
+    opacity: .5;
+}

@@ -1,0 +1,288 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="Content/bootstrap.min.css">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="Scripts/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="Scripts/bootstrap.min.js">
+    </script>
+    <script type="text/javascript" src="Scripts/echarts.min.js"></script>
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/config.js"></script>
+</head>
+
+<body style="background-color: transparent;">
+    <div id="container" style="height: 320px;width:490px; margin: 0 auto;">
+    </div>
+    <script type="text/javascript">
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+        var MineCode = getQueryString("MineCode");
+        var color = 'white';
+        var customeColor = getQueryString('c');
+        if (!!customeColor) {
+            color = customeColor;
+        }
+
+        var dom = document.getElementById("container");
+        var myChart = echarts.init(dom);
+
+        var option = {
+            title: {
+                subtext: '上月环比',
+                subtextStyle: {
+                    color: color,
+                    fontSize: '15',
+                    fontFamily: '微软雅黑',
+                },
+                right: 0,
+                top: 20
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: function (params) {
+                    return params.name.split('_')[0] + ' ' + params.percent + '%';
+                }
+            },
+            legend: {
+                orient: 'vertical',
+                left: 250,
+                top: 60,
+                itemGap: 20,
+                itemWidth: 14,
+                itemHeight: 14,
+
+                formatter: function (name) {
+                    var a = name.split('_');
+                    var d = a[3] == 1 ? '{d|}' : '{e|}';
+                    return [
+                        '{a| ' + a[0] + '}',
+                        '{b|' + a[1] + '%}',
+                        '{c|' + a[2] + '%}',
+                        d
+                    ].join('');
+                },
+                textStyle: {
+                    rich: {
+                        a: {
+                            width: 80,
+                            fontSize: '16',
+                            color: color,
+                            fontFamily: '微软雅黑',
+                        },
+                        b: {
+                            align: 'right',
+                            width: 70,
+                            fontSize: '18',
+                            color: color,
+                            fontFamily: '微软雅黑',
+                        },
+                        c: {
+                            align: 'right',
+                            width: 50,
+                            fontSize: '14',
+                            color: color,
+                            fontFamily: '微软雅黑',
+                        },
+                        d: {
+                            backgroundColor: {
+                                image: 'content/images/上升.png'
+                            },
+                        },
+                        e: {
+                            backgroundColor: {
+                                image: 'content/images/下降.png'
+                            },
+                        },
+                    }
+                }
+            },
+            color: ['#d87a80', '#8d98b3', '#e5cf0d', '#97b552'],
+            series: [{
+                name: '托管矿井产量',
+                type: 'pie',
+                radius: ['58.5', '80'],
+                center: [135, 135],
+                label: {
+                    normal: {
+                        formatter: '{d} %',
+                        //backgroundColor: '#eee',
+                        textStyle: {
+                            fontSize: '13',
+                            color: color
+                        }
+                    }
+                },
+                labelLine: {
+                    lineStyle: {
+                        color: color
+                    }
+                },
+            }]
+        };
+
+
+
+
+        if (option && typeof option === "object") {
+
+            //本月的产量
+            var dateCurrent = dataformat(new Date().getTime(), "yyyy-MM-dd");
+            var datasourceCurrent = getData(dateCurrent);
+            //上月的产量
+            var datePreMonth = getPreMonth(dateCurrent);
+            var datasourcePreMonth = getData(datePreMonth);
+
+
+            var legend_data = [];
+            var series_data = [];
+            for (var i = 0; i < datasourceCurrent.length; i++) {
+                var issheng = datasourceCurrent[i].productionAmount > datasourcePreMonth[i].productionAmount ? 1 : 0;
+                var hbStr = datasourceCurrent[i].mineName + "_" + datasourceCurrent[i].productionAmount + "_" + datasourceCurrent[i].rate + "_" + issheng;
+
+                var obj_legend_data = {};//legend_data对象
+                obj_legend_data.name = hbStr;
+                obj_legend_data.icon = 'circle';
+                legend_data[i] = obj_legend_data;
+
+                var obj_series_data = {};//series_data对象
+                obj_series_data.name = hbStr;
+                obj_series_data.value = datasourceCurrent[i].productionAmount;
+                series_data[i] = obj_series_data;
+            }
+
+
+            //var legend_data = [
+            //    {
+            //        name: '下梨园_20.5_2.2_1',
+            //        icon: 'circle'
+            //    },
+            //    {
+            //        name: '白芦煤矿_35_1_0',
+            //        icon: 'circle'
+            //    },
+            //    {
+            //        name: '阿尔巴斯_15_0.8_1',
+            //        icon: 'circle'
+            //    },
+            //    {
+            //        name: '万通源_30_0.7_0',
+            //        icon: 'circle'
+            //    }
+            //];
+            //var series_data = [{
+            //    value: 20.5,
+            //    name: '下梨园_20.5_2.2_1',
+            //},
+            //{
+            //    value: 35,
+            //    name: '白芦煤矿_35_1_0',
+            //},
+            //{
+            //    value: 15,
+            //    name: '阿尔巴斯_15_0.8_1',
+            //},
+            //{
+            //    value: 30,
+            //    name: '万通源_30_0.7_0',
+            //}
+            //];
+            option.series[0].data = series_data;
+            option.legend.data = legend_data;
+            myChart.setOption(option);
+        }
+        function getData(date) {
+            var datasource = [];
+            $.ajax({
+                url: httpIP + "CariLongKouAttemper/api/screen/GetDepositMonthMineProduction?mineCode=" + MineCode + "&date=" + date,
+                //contentType: "text/plain",
+                dataType: "JSON",
+                headers: {
+                    "userid": $.cookie('user_token')
+                },
+                type: "GET",
+                async: false,
+                success: function (data) {
+
+                    if (data && data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            var arr = {};
+                            arr.mineName = data[i].mineName;
+                            arr.productionAmount = data[i].productionAmount;
+                            arr.rate = data[i].rate;
+                            datasource[i] = arr;
+                        }
+                    }
+                }, error: function (e) {
+                     console.log(e.responseText)
+                }
+            });
+            return datasource;
+        }
+
+        //获取上一月份
+        function getPreMonth(date) {
+            var arr = date.split('-');
+            var year = arr[0]; //获取当前日期的年份
+            var month = arr[1]; //获取当前日期的月份
+            var day = arr[2]; //获取当前日期的日
+            var days = new Date(year, month, 0);
+            days = days.getDate(); //获取当前日期中月的天数
+            var year2 = year;
+            var month2 = parseInt(month) - 1;
+            if (month2 == 0) {
+                year2 = parseInt(year2) - 1;
+                month2 = 12;
+            }
+            var day2 = day;
+            var days2 = new Date(year2, month2, 0);
+            days2 = days2.getDate();
+            if (day2 > days2) {
+                day2 = days2;
+            }
+            if (month2 < 10) {
+                month2 = '0' + month2;
+            }
+            var t2 = year2 + '-' + month2 + '-' + day2;
+            return t2;
+        }
+        function dataformat(time, format) {
+            var t = new Date(time);
+            var tf = function (i) { return (i < 10 ? '0' : '') + i };
+            return format.replace(/yyyy|MM|dd|HH|mm|ss/g, function (a) {
+                switch (a) {
+                    case 'yyyy':
+                        return tf(t.getFullYear());
+                        break;
+                    case 'MM':
+                        return tf(t.getMonth() + 1);
+                        break;
+                    case 'mm':
+                        return tf(t.getMinutes());
+                        break;
+                    case 'dd':
+                        return tf(t.getDate());
+                        break;
+                    case 'HH':
+                        return tf(t.getHours());
+                        break;
+                    case 'ss':
+                        return tf(t.getSeconds());
+                        break;
+                }
+            })
+        };
+    </script>
+</body>
+
+</html>

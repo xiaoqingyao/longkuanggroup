@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="Content/bootstrap.min.css">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="Scripts/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Scripts/echarts.min.js"></script>
+
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/config.js"></script>
+    <script src="Scripts/dateHelper.js"></script>
+    <style>
+        body {
+            color: white;
+            text-align: center;
+        }
+
+        .tabHeader {
+            background-color: #0D2855;
+            font-size: 14px;
+            text-align: center;
+            color: white;
+            height: 30px;
+            line-height: 30px;
+            border: 2px solid #116190;
+        }
+
+        .tabBody {
+            border: 2px solid #1184B8;
+            border-top: 0px;
+            height: 40px;
+            margin-bottom: 30px;
+        }
+
+        .pcont {
+            width: 100%;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+
+            .pcont li {
+                display: inline-block;
+                margin: 0 10px;
+            }
+
+                .pcont li a {
+                    padding: 0 20px;
+                    font-size: 16px;
+                    line-height: 40px;
+                    display: inline-block;
+                   color:white;
+                }
+    </style>
+</head>
+<body style="background-color:transparent;width:90%">
+ 
+        <div class="tabHeader">值班领导</div>
+        <div class="tabBody" >
+            <ul class="pcont" id="leader1"><!--<li><a>张建忠</a></li>   <li><a>王世峰</a></li>--></ul>
+        </div>
+        <div class="tabHeader">带班领导</div>
+        <div class="tabBody">
+            <ul class="pcont"  id="leader2"><!--<li><a>刘志</a></li>   <li><a>王强</a></li><li><a>周瑜</a></li>--></ul>
+        </div>
+        <div class="tabHeader">跟班人员</div>
+        <div class="tabBody">
+            <ul class="pcont"  id="leader3"><!--<li><a>刘三</a></li>   <li><a>杨树立</a></li><li><a>张天</a></li>--></ul>
+        </div>
+ <script type="text/javascript">
+     function getQueryString(name) {
+         var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+         var r = window.location.search.substr(1).match(reg);
+         if (r != null) {
+             return unescape(r[2]);
+         }
+         return null;
+     }
+     var mineCode = getQueryString("MineCode");
+
+     $.ajax({
+         url: httpIP + "CariLongKouAttemper/api/screen/GetDutyInfo?dateTime=" + getCurrentDate()+"&mineCode=" + mineCode ,
+         dataType: "JSON",
+         headers: {
+             "userid": $.cookie('user_token')
+         },
+         type: "GET",
+         async: false,
+         success: function (data) {
+             if (data.mineDutyList.length>0) {
+                 var dt = data.mineDutyList[0];
+                 $("#leader1").append("<li><a>" + dt.dutyLeader + "</a></li>");
+                 $("#leader2").append("<li><a>" + dt.shiftLeader + "</a></li>");
+                 $("#leader3").append("<li><a>" + dt.dutyGrouper + "</a></li>");
+             }
+         }, error: function (e) {
+              console.log(e.responseText)
+         }
+     });
+ </script>
+</body>
+</html>

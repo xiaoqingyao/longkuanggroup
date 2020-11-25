@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="Content/bootstrap.min.css">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="Scripts/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Scripts/echarts.min.js"></script>
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/config.js"></script>
+    <script src="Scripts/dateHelper.js"></script>
+</head>
+<body style="height: 100%;width:100%; background-color:transparent;">
+
+    <div id="container" ></div>
+ 
+
+    <script type="text/javascript">
+
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+        function resizeWorldMapContainer(dom) {
+            dom.style.width = window.innerWidth + 'px';
+            dom.style.height = window.innerHeight + 'px';
+        };
+        var mineCode = getQueryString("MineCode");
+        var color = 'white';
+
+        var dom = document.getElementById("container");
+        resizeWorldMapContainer(dom);
+        var myChart = echarts.init(dom);
+        var app = {};
+
+        var datasource = [];
+        option = null;
+
+        option = {
+            title: {
+                text: '单位：分钟',
+                textStyle: {
+                    fontSize: '12',
+                    color: 'white',
+                    fontFamily: '微软雅黑',
+                },
+                left: '25',
+            },
+            color: ['#00A0EA', '#88EC9C'],
+            legend: {
+                data: ['昨日平均', '本月平均'], textStyle: {
+                    fontSize: '12',
+                    color: 'white',
+                    fontFamily: '微软雅黑',
+                },
+            },
+            tooltip: {},
+            xAxis: {
+                type: 'category',
+                //data: ['梁家煤矿', '望田煤矿', '大恒煤矿', '龙郓煤矿'],
+                axisLabel: {
+                    fontSize: '12',
+                    color: 'white',
+                    fontFamily: '微软雅黑',
+                },
+            },
+            dataset: {
+                source: datasource
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    fontSize: '12',
+                    color: 'white',
+                    fontFamily: '微软雅黑',
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: 'white',
+                    }
+                },
+                axisTick: {
+                    lineStyle: {
+                        color: 'white',
+                    }
+                }
+            },
+            grid: {
+                top: '10%',
+                left: '3%',
+                right: '4%',
+                bottom: '18%',
+                containLabel: true
+            },
+            // Declare several bar series, each will be mapped
+            // to a column of dataset.source by default.
+            series: [
+                {
+                    type: 'bar',
+                },
+                {
+                    type: 'bar',
+                }
+            ]
+        };
+
+        datasource.push(['product', '昨日平均', '本月平均']);
+
+        var arryDepts = ['矿领导', '综放队', '综掘队', '综采队', '综采二队', '综采二队', '综掘队', '综采一队', '综采02队', '采掘室', '通防工区', '机电室', '科技信息室'];
+        $.ajax({
+            url: httpIP + "TDRJNetWebApi/api/longkou/AvgWorkTime/getDataByDept?mineCode=" + mineCode,
+            dataType: "JSON",
+            headers: {
+                "userid": $.cookie('user_token')
+            },
+            type: "GET",
+            async: false,
+            success: function (data) {
+                for (var i = 0; i < data.Data.length; i++) {
+                    var index = $.inArray(data.Data[i].name, arryDepts);
+                    if (index < 0) {
+                        continue;
+                    }
+                    var arr = [];
+                    arr[0] = data.Data[i].name;
+                    arr[1] = data.Data[i].lastDayValue;
+                    arr[2] = data.Data[i].monthValue;
+                    datasource.push(arr);
+                }
+            }, error: function (e) {
+                 console.log(e.responseText)
+            }
+        });
+        option.dataset.source = datasource;
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+
+
+
+
+    </script>
+</body>
+</html>

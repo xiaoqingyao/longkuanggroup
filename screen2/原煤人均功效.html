@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="Content/bootstrap.min.css">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="Scripts/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Scripts/echarts.min.js"></script>
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/dateHelper.js"></script>
+    <script src="Scripts/config.js"></script>
+    <style>
+        #datebtn {
+            opacity: .5;
+        }
+    </style>
+</head>
+<body style="background-color: transparent">
+    <div id="container" style="height: 320px;width:530px;"  margin: auto;"></div>
+
+    <script type="text/javascript">
+
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+        function resizeWorldMapContainer(dom) {
+            dom.style.width = window.innerWidth + 'px';
+            dom.style.height = window.innerHeight + 'px';
+        };
+        var mineCode = getQueryString("MineCode");
+        var color = 'white';
+        var customeColor = getQueryString('c');
+        if (!!customeColor) {
+            color = customeColor;
+        }
+
+        var dom = document.getElementById("container");
+        resizeWorldMapContainer(dom);
+        var myChart = echarts.init(dom);
+
+        var datasource = [];
+
+        var option = {
+            title: {
+                text: '单位: 吨/工',
+                textStyle: {
+                    fontSize: '12',
+                    color: color,
+                    fontFamily: '微软雅黑',
+                },
+                left: '10',
+            },
+            backgroundColor: '', //设置无背景色
+            color: ['#337ab7'],
+            legend: {
+                right: '5',
+                textStyle: {
+                    fontSize: '16',
+                    color: color,
+                    fontFamily: '微软雅黑',
+                },
+                itemGap: 40,
+                itemWidth: 16
+            },
+            grid: [
+                {
+                    top:'10%',
+                    left: '3%',
+                    right: '4%',
+                    bottom: '18%',
+                    //containLabel: true
+                },
+            ],
+            tooltip: {
+
+            },
+            dataset: {
+                source: datasource
+            },
+            xAxis: {
+                type: 'category',
+                axisLabel: {
+                    fontSize: '16',
+                    color: color,
+                    fontFamily: '微软雅黑',
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: color,
+                    }
+                },
+                axisTick: {
+                    lineStyle: {
+                        color: color,
+                    }
+                }
+            },
+            yAxis: {
+                axisLabel: {
+                    fontSize: '16',
+                    color: color,
+                    fontFamily: '微软雅黑',
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: color,
+                    }
+                },
+                axisTick: {
+                    lineStyle: {
+                        color: color,
+                    }
+                }
+            },
+            series: [
+                {
+                    type: 'bar',
+                    barWidth: '22'
+                }
+            ]
+        };
+
+
+
+        datasource = [];
+        datasource.push(['product', '产量']);
+ 
+
+        var year = new Date().getFullYear();
+        $.ajax({
+            url: httpIP + "CariLongKouAttemper/api/screen/GetRawCoalEfficiency?year=" + year + "&mineCode=" + mineCode,
+            dataType: "JSON",
+            headers: {
+                "userid": $.cookie('user_token')
+            },
+            type: "GET",
+            async: false,
+            success: function (data) {
+
+
+                for (var i = 0; i < data.monthDatas.length; i++) {
+                    var arr = [];
+                    arr[0] = data.monthDatas[i].month;
+                    arr[1] = data.monthDatas[i].rawCoalEfficiency;
+                    datasource[i + 1] = arr;
+                }
+
+            }, error: function (e) {
+                 console.log(e.responseText)
+            }
+        });
+        option.dataset.source = datasource;
+        myChart.setOption(option);
+
+    </script>
+</body>
+</html>

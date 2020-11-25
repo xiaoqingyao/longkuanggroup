@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="./index.css">
+
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="Content/bootstrap.min.css">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="Scripts/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="Scripts/bootstrap.min.js">
+    </script>
+    <script type="text/javascript" src="Scripts/echarts.min.js"></script>
+
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/config.js"></script>
+    <script src="Scripts/dateHelper.js"></script>
+    <style>
+        .Bl {
+            color: #FFF
+        }
+
+            .Bl li {
+                margin: 18px 0;
+                overflow: hidden;
+            }
+
+            .Bl .box {
+                background-color: #585757;
+                width: 135px;
+                height: 15px;
+                border-radius: 2px;
+                position: relative;
+            }
+
+            .Bl .color1 {
+                color: #9f020e;
+            }
+
+            .Bl .color2 {
+                color: #aa660f;
+            }
+
+            .Bl .color3 {
+                color: #9dab03;
+            }
+
+            .Bl .color4 {
+                color: #3cda65;
+            }
+
+            .Bl .bg1 {
+                background-color: #9f020e;
+            }
+
+            .Bl .bg2 {
+                background-color: #aa660f;
+            }
+
+            .Bl .bg3 {
+                background-color: #9dab03;
+            }
+
+            .Bl .bg4 {
+                background-color: #3cda65;
+            }
+
+            .Bl span {
+                display: inline-block;
+                float: left;
+                text-align: left
+            }
+
+        .colum1 {
+            width: 133px;
+            font-size: 18px
+        }
+
+        .colum2 {
+            width: 100px;
+        }
+
+        .Bl .box em {
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body style="height: 320px;width:490px; background-color: transparent;">
+    <ul class="Bl">
+        <li>
+            <span class="colum1">&nbsp;</span>
+            <span class="colum2">数量</span>
+            <span class="colum3">
+                占比数
+            </span>
+        </li>
+        <li>
+            <span class="colum1">矿井总人数</span>
+            <span class="colum2" id="TotalRegisterPerson">1000</span>
+            <span class="colum3">
+                <i class="box"><em class="bg1" style="width:100%"></em></i>
+                <i class="color1">100%</i>
+            </span>
+        </li>
+        <li>
+            <span class="colum1">当前井下人数</span>
+            <span class="colum2" id="TotalDownPerson">700</span>
+            <span class="colum3">
+                <i class="box"><em class="bg2" style="width:80%"></em></i>
+                <i class="color2" id="TotalDownPersonRate">70%</i>
+            </span>
+        </li>
+        <li>
+            <span class="colum1">重点区域人数</span>
+            <span class="colum2" id="TotalEnterKeyPerson">200</span>
+            <span class="colum3">
+                <i class="box"><em class="bg3" style="width:20%"></em></i>
+                <i class="color3" id="TotalEnterKeyPersonRate">20%</i>
+            </span>
+        </li>
+        <li>
+            <span class="colum1">当前带班领导</span>
+            <span class="colum2" id="TotalMineLeaderNames">100</span>
+            <span class="colum3">
+                <i class="box"><em class="bg4" style="width:10%"></em></i>
+                <i class="color4" id="TotalMineLeaderNamesRate">10%</i>
+            </span>
+        </li>
+    </ul>
+    <script type="text/javascript">
+        $(function () {
+            //值班领导
+            $.ajax({
+                url: httpIP + "TDRJNetWebApi/Api/MineCurrent/GetMineCurrentInfo",
+                //contentType: "text/plain",
+                dataType: "JSON",
+                headers: {
+                    "userid": $.cookie('user_token')
+                },
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    $("#TotalRegisterPerson").html(data.Data.TotalRegisterPerson);
+                    $("#TotalDownPerson").html(data.Data.TotalDownPerson);
+                    $("#TotalEnterKeyPerson").html(data.Data.TotalEnterKeyPerson);
+                    $("#TotalMineLeaderNames").html(data.Data.TotalMineLeaderNames);
+
+                    var rate1 = Math.round(data.Data.TotalDownPerson * 100 / data.Data.TotalRegisterPerson);
+                    $("#TotalDownPersonRate").html(rate1 + "%");
+                    $(".bg2").css("width", rate1 + "%");
+                    var rate2 = Math.round(data.Data.TotalEnterKeyPerson * 100 / data.Data.TotalRegisterPerson);
+                    $("#TotalEnterKeyPersonRate").html(rate2 + "%");
+                    $(".bg3").css("width", rate2 + "%");
+                    var rate3 = Math.round(data.Data.TotalMineLeaderNames * 100 / data.Data.TotalRegisterPerson);
+                    $("#TotalMineLeaderNamesRate").html(rate3 + "%");
+                    $(".bg4").css("width", rate3 + "%");
+
+                }, error: function (e) {
+                     console.log(e.responseText)
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

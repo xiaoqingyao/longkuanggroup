@@ -1,0 +1,432 @@
+﻿<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+    <meta charset="utf-8">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="Content/bootstrap.min.css" />
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="Scripts/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="Scripts/bootstrap.min.js">
+    </script>
+    <script type="text/javascript" src="Scripts/echarts.min.js"></script>
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/config.js"></script>
+    <script src="Scripts/dateHelper.js"></script>
+    <style>
+        #datebtn {
+            display: none;
+        }
+
+            #datebtn .btn-group {
+                width: 50px;
+                display: block;
+            }
+
+            #datebtn button {
+                border-radius: 0
+            }
+
+        .change {
+            width: 50px;
+            float: right;
+            margin-right: 10px;
+            position: absolute;
+            right: 10px;
+            top: 0;
+            z-index: 999;
+        }
+
+        #container {
+            margin-top: 30px !important;
+        }
+
+        .changebtn {
+            border: 1px solid #787a7b;
+            border-radius: 20px;
+            width: 50px;
+            height: 22px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .ico-arrow {
+            background: url(Content/images/ico-open.png) no-repeat;
+            background-size: 100%;
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            -moz-transition: all 0.3s;
+            -webkit-transition: all 0.3s;
+            -o-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+        .copen .ico-arrow {
+            -webkit-transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            transform: rotate(90deg);
+        }
+
+        .btn-group {
+            margin-left: 0px !important;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            //日月年展开收起
+            $(".changebtn").click(function () {
+                $(this).toggleClass('copen');
+                $("#datebtn").slideToggle();
+            });
+
+            $(".btn-group").click(function () {
+                $(".changebtn").removeClass('copen');
+                $("#datebtn").slideUp();
+            });
+        });
+    </script>
+</head>
+
+<body style="height: 350px;width:410px; background: transparent;">
+    <div class="change">
+        <div class="changebtn"><i class="ico-arrow"></i></div>
+        <div id="datebtn" class="btn-group btn-group-justified" role="group" style="display: none;">
+            <div class="btn-group" style="padding:0px 5px;" role="group">
+                <button type="button" class="btn btn-gray btn-xs" onclick="ChangeData(this,'日')" id="day">日</button>
+            </div>
+            <div class="btn-group" style="padding:0px 5px;" role="group">
+                <button type="button" class="btn btn-gray btn-xs" onclick="ChangeData(this,'月')">月</button>
+            </div>
+            <div class="btn-group" style="padding:0px 5px;" role="group">
+                <button type="button" class="btn btn-primary btn-xs" onclick="ChangeData(this,'年')">年</button>
+            </div>
+        </div>
+    </div>
+    <div id="container" style="height: 310px"></div>
+    <!--<div style="width:110px; margin:0px auto;">
+        <div id="datebtn" class="btn-group btn-group-justified" role="group">
+            <div class="btn-group" style="padding:0px 5px;" role="group">
+                <button type="button" class="btn btn-primary btn-xs" onclick="ChangeData(this,'日')" id="day">日</button>
+            </div>
+            <div class="btn-group" style="padding:0px 5px;" role="group">
+                <button type="button" class="btn btn-gray  btn-xs" onclick="ChangeData(this,'月')">月</button>
+            </div>
+            <div class="btn-group" style="padding:0px 5px;" role="group">
+                <button type="button" class="btn btn-gray  btn-xs" onclick="ChangeData(this,'年')">年</button>
+            </div>
+        </div>
+
+    </div>-->
+    <script type="text/javascript">
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+        var customeColor = 'white';
+        var color = getQueryString('c');
+        if (!!color) {
+            customeColor = color;
+        }
+
+        var dom = document.getElementById("container");
+        var myChart = echarts.init(dom);
+        var option = {
+            title: {
+                subtext: '矿名称',
+                subtextStyle: {
+                    color: customeColor,
+                    fontSize: '12',
+                    fontFamily: '微软雅黑',
+                },
+                left: 5,
+                top: 5
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: function (params) {
+                    return '';
+                }
+            },
+            grid: {
+                top: '20',
+                left: '0',
+                right: '20',
+                bottom: '20',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'value',
+                max: 100,
+                boundaryGap: ['0%', '5%'],
+                splitNumber: 5,
+                axisLabel: {
+                    formatter: '{value}%',
+                    fontSize: '14',
+                    color: customeColor,
+                    fontFamily: '微软雅黑',
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: customeColor,
+                    }
+                },
+                axisTick: {
+                    lineStyle: {
+                        color: customeColor,
+                    }
+                }
+            },
+            yAxis: {
+                type: 'category',
+                data: ['望田煤矿', '龙郓煤矿', '大恒煤矿', '梁家煤矿'],
+                axisLabel: {
+                    fontSize: '16',
+                    color: customeColor,
+                    fontFamily: '微软雅黑',
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: customeColor,
+                    }
+                },
+                axisTick: {
+                    alignWithLabel: true,
+                    lineStyle: {
+                        color: customeColor,
+                    }
+                },
+                splitLine: {
+                    show: true,
+                    alignWithLabel: true,
+                }
+            },
+            series: [{
+                name: ' ',
+                type: 'bar',
+                color: '#569da9',
+                barWidth: '15',
+                data: [{
+                    value: '79',
+                    itemStyle: {
+                        color: '#9dab20',
+                        barBorderRadius: [0, 5, 5, 0]
+                    }
+                },
+                {
+                    value: '80',
+                    itemStyle: {
+                        color: '#bd7820',
+                        barBorderRadius: [0, 5, 5, 0]
+                    }
+                },
+                {
+                    value: '68',
+                    itemStyle: {
+                        color: '#d87a80',
+                        barBorderRadius: [0, 5, 5, 0]
+                    }
+                },
+                {
+                    value: '72',
+                    itemStyle: {
+                        color: '#97b552',
+                        barBorderRadius: [0, 5, 5, 0]
+                    }
+                }
+                ],
+                label: {
+                    normal: {
+                        formatter: ' {c}% ',
+                        show: true,
+                        position: 'right',
+                        color: customeColor,
+                        fontSize: '16',
+                        backgroundColor: '#080e2e'
+                    }
+                },
+            }]
+        };;
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+
+        function ChangeData(obj, date) {
+            $("#datebtn :button").each(function () {
+                $(this).removeClass();
+                $(this).addClass("btn btn-gray btn-xs");
+            });
+            $(obj).removeClass();
+            $(obj).addClass("btn btn-primary btn-xs");
+
+            var datas = getData(date);
+            var colors = ['#9dab20', '#bd7820', '#d87a80', '#97b552'];
+            var yAxisData = [];
+            var seriesData = [];
+
+            if (datas) {
+                for (var i = 0; i < datas.length; i++) {
+                    yAxisData[i] = datas[i].mineName;//纵轴所有煤矿
+                    var sObj = {
+                        value: datas[i].openMachineRate,
+                        itemStyle: {
+                            color: colors[i],
+                            barBorderRadius: [0, 5, 5, 0]
+                        }
+                    };
+
+                    seriesData[i] = sObj;
+                }
+
+                option.series[0].data = seriesData;
+
+                option.yAxis.data = yAxisData;
+            }
+
+            //if (date == "日") {
+            //    option.series[0].data = [{
+            //        value: '79',
+            //        itemStyle: {
+            //            color: '#9dab20',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    },
+            //    {
+            //        value: '80',
+            //        itemStyle: {
+            //            color: '#bd7820',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    },
+            //    {
+            //        value: '68',
+            //        itemStyle: {
+            //            color: '#d87a80',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    },
+            //    {
+            //        value: '72',
+            //        itemStyle: {
+            //            color: '#97b552',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    }
+            //    ];
+            //}
+            //if (date == "月") {
+            //    option.series[0].data = [{
+            //        value: '54',
+            //        itemStyle: {
+            //            color: '#9dab20',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    },
+            //    {
+            //        value: '67',
+            //        itemStyle: {
+            //            color: '#bd7820',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    },
+            //    {
+            //        value: '43',
+            //        itemStyle: {
+            //            color: '#d87a80',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    },
+            //    {
+            //        value: '34',
+            //        itemStyle: {
+            //            color: '#97b552',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    }
+            //    ];
+            //}
+            //if (date == "年") {
+            //    option.series[0].data = [{
+            //        value: '56',
+            //        itemStyle: {
+            //            color: '#9dab20',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    },
+            //    {
+            //        value: '28',
+            //        itemStyle: {
+            //            color: '#bd7820',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    },
+            //    {
+            //        value: '37',
+            //        itemStyle: {
+            //            color: '#d87a80',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    },
+            //    {
+            //        value: '58',
+            //        itemStyle: {
+            //            color: '#97b552',
+            //            barBorderRadius: [0, 5, 5, 0]
+            //        }
+            //    }
+            //    ];
+            //}
+
+            myChart.setOption(option, true);
+        }
+
+        function getData(dateType) {
+            var arrDateFromTo = [];
+            if (dateType == "日") {
+                arrDateFromTo[0] = getTargetDate(-1, '-');
+                arrDateFromTo[1] = getTargetDate(-1, '-');
+            } else if (dateType == "月") {
+                arrDateFromTo = getDateFromEnd_Month();
+            } else if (dateType == "年") {
+                arrDateFromTo = getDateFromEnd_Year();
+            }
+            var datasource = [];
+            $.ajax({
+                url: httpIP + "CariLongKouAttemper/api/screen/GetMineMachineRate?mineCode=0&startDate=" + arrDateFromTo[0] + "&endDate=" + arrDateFromTo[1],
+                dataType: "JSON",
+                headers: {
+                    "userid": $.cookie('user_token')
+                },
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    if (data && data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            var arr = {};
+                            arr.mineName = data[i].mineName;
+                            arr.openMachineRate = data[i].openMachineRate;//*100;
+                            datasource[i] = arr;
+                        }
+                    }
+                }, error: function (e) {
+                    console.log(e.responseText);
+                }
+            });
+            return datasource;
+        }
+
+        $("#day").click();
+    </script>
+</body>
+
+</html>

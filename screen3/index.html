@@ -1,0 +1,558 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>龙矿集团安全生产移动综合互联平台</title>
+    <link rel="stylesheet" type="text/css" href="./index.css">
+    <link rel="stylesheet" type="text/css" href="./animate.min.css">
+
+    <script src="Scripts/jquery.min.js"></script>
+    <script src="Scripts/jquery-3.3.1.min.js"></script>
+    <script src="Scripts/layer/layer.js"></script>
+    <script src="Scripts/echarts.min.js"></script>
+    <script src="Scripts/jq_scroll.js"></script>
+
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/config.js"></script>
+    <script src="Scripts/dateHelper.js"></script>
+
+    <script>
+        function fixedToRefresh() {
+            var dt = new Date();
+            var curHour = dt.getHours();
+            var minutes = dt.getMinutes();
+
+            if (minutes == 0 && (curHour == 0 || curHour == 12 || curHour == 24 || curHour == 6 || curHour == 18)) {
+    
+                window.location.reload();
+            }
+        }
+        /*获取今天的时间*/
+        $(function () {
+            //定时刷新
+            setInterval(fixedToRefresh, 58000);
+
+            function show() {
+                var mydate = new Date();
+                var str = "" + mydate.getFullYear() + "年";
+                str += (mydate.getMonth() + 1) + "月";
+                str += mydate.getDate() + "日";
+
+                var curHour = mydate.getHours();      //获取当前小时数(0-23)
+                var curMinute = mydate.getMinutes();   // 获取当前分钟数(0-59)
+                var curSec = mydate.getSeconds();      //获取当前秒数(0-59)
+
+                if (curHour <= 9) {
+                    curHour = '0' + curHour;
+                }
+
+                if (curSec <= 9) {
+                    curSec = '0' + curSec;
+                }
+                if (curMinute <= 9) {
+                    curMinute = '0' + curMinute;
+                }
+                str += ' ' + curHour + ':' + curMinute + ':' + curSec;
+                return str;
+
+            }
+            function setDateText() {
+                $(".date").html(show())
+            }
+
+            $(document).ready(function () {
+                setInterval(setDateText, 1000);
+            });
+        });
+
+        /*文字滚动*/
+        $(function () {
+            $(".line").slideUp(); //文字滚动
+
+            //关闭窗口
+            $(".tip-close").click(function () {
+                $(".tipbox").animate({
+                    width: '0',
+                    opacity: '0',
+                    left: '0'
+                }, "slow");
+                $(".ico-tip").show(1500);
+            });
+        });
+
+        (function ($) {
+            $.fn.extend({
+                "slideUp": function (value) {
+
+                    var docthis = this;
+                    //默认参数
+                    value = $.extend({
+                        "li_h": "25", //上移距离
+                        "time": 3000, //间隔时间
+                        "movetime": 1000 //过渡时间
+                    }, value)
+
+                    //向上滑动动画
+                    function autoani() {
+                        $("li:first", docthis).animate({
+                            "margin-top": -value.li_h
+                        }, value.movetime, function () {
+                            $(this).css("margin-top", 0).appendTo(".line");
+                        })
+                    }
+
+                    //自动间隔时间向上滑动
+                    var anifun = setInterval(autoani, value.time);
+
+                    //悬停时停止滑动，离开时继续执行
+                    $(docthis).children("li").hover(function () {
+                        clearInterval(anifun); //清除自动滑动动画
+                    }, function () {
+                        anifun = setInterval(autoani, value.time); //继续执行动画
+                    })
+                }
+            })
+        })(jQuery)
+
+        /*值班领导文字滚动*/
+        $(function () {
+            $(".line2").slideUp2(); //文字滚动
+
+        });
+
+        (function ($) {
+            $.fn.extend({
+                "slideUp2": function (value) {
+
+                    var docthis = this;
+                    //默认参数
+                    value = $.extend({
+                        "li_h": "123.75", //上移距离
+                        "time": 3000, //间隔时间
+                        "movetime": 3000 //过渡时间
+                    }, value)
+
+                    //向上滑动动画
+                    function autoani() {
+                        $("li:first", docthis).animate({
+                            "margin-top": -value.li_h
+                        }, value.movetime, function () {
+                            $(this).css("margin-top", 0).appendTo(".line2");
+                        })
+                    }
+
+                    //自动间隔时间向上滑动
+                    var anifun = setInterval(autoani, value.time);
+
+                    //悬停时停止滑动，离开时继续执行
+                    $(docthis).children("li").hover(function () {
+                        clearInterval(anifun); //清除自动滑动动画
+                    }, function () {
+                        anifun = setInterval(autoani, value.time); //继续执行动画
+                    })
+                }
+            })
+        })(jQuery)
+
+        $(document).ready(function () {
+            //$("#scrollDiv").Scroll({ line: 1, speed: 500, timer: 3000, up: "but_up", down: "but_down" });
+            $("#toWideScreenDiv").mouseover(function () {
+                $("#toWideScreenA").show();
+                $("#toReturn").show();
+
+            });
+            $("#toWideScreenDiv").mouseout(function () {
+                $("#toWideScreenA").hide();
+                $("#toReturn").hide();
+            });
+        });
+        //$(function () {
+        //    let screenHigth = document.body.clientHeight;
+        //    let screenWidth = document.body.clientWidth;
+        //    alert(screenHigth);
+        //    $(".longk").height(screenHigth);
+        //    $(".longk").width(screenWidth);
+        //});
+    </script>
+</head>
+
+
+<body>
+    <div class="longk">
+        <div class="title">
+            <!--天气-->
+
+            <div class="weather">
+                <span class="date"></span>&nbsp;
+                <iframe allowtransparency="true" frameborder="0" width="180" height="36" scrolling="no"
+                        src="http://tianqi.2345.com/plugin/widget/index.htm?s=3&z=2&t=0&v=0&d=3&bd=0&k=&f=ffffff&ltf=009944&htf=cc0000&q=1&e=1&a=0&c=60488&w=180&h=36&align=center"></iframe>
+            </div>
+            <i class="logo"></i>龙矿集团安全生产云平台
+            <!--新闻滚动-->
+            <div class="tipbox" style="display:none;">
+                <i class="ico-notice"></i>
+                <div class="cont">
+                    <ul class="line" id="message">
+                        <li style="margin-top: -1.79788px;"><a>关于科级及以下管理人员“三考一评”能力考试补考的通知</a></li>
+                        <li style="margin-top: 0px;"><a>转发山东能源安传（2019）81号文件认真做好地质灾害防治工作的通知</a></li>
+                        <li style="margin-top: 0px;"><a>转发鲁煤监政法[2019]36号《山东煤矿双重预防机制建设持续推进工作方案》的通知</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="float:right;position:absolute;right: 12px;top: 24px;width: 71px; height: 50px;" id="toWideScreenDiv">
+                <a style="color:white;font-size: 21px;display: none;" id="toWideScreenA" href="../screen/index.html">窄屏版</a>
+                <a style="color:white;font-size: 21px;display: none;" id="toReturn" href="../../../../CariWeb/Main.aspx?v=347.2768">返回</a>
+            </div>
+        </div>
+
+        <div class="main" style="padding: 0;">
+            <!--左边列1-->
+            <div class="left animated slideInLeft">
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon6"></i>热电单位</br><em><!--Thermoelectricity--></em></div>
+                    <div class="part-content">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./热电单位.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+                        <!--<img src="Content/images/pic07.png" width="350"
+                        style="width:432px; height:296px;display: block;margin: 20px auto;" />-->
+
+                    </div>
+                </div>
+
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon7"></i>水泥、空分、液氮</br><em><!--Comprehensive--></em></div>
+                    <div class="part-content">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./水泥空分发电量.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+
+                    </div>
+                </div>
+
+                <div class="part part1">
+                    <div class="part-title">
+                        <i class="icon icon4"></i>开机率
+                        </br><em><!--Turn-on Ratio--></em>
+                    </div>
+                    <div class="part-content">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./开机率.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+
+                    </div>
+                </div>
+
+            </div>
+            <!--左边列2-->
+            <div class="left animated slideInLeft">
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon1"></i>产量销量对比</br><em><!--Output and sales--></em></div>
+                    <div class="part-content">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./产量销量对比.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+
+                    </div>
+                </div>
+
+                <div class="part part1">
+                    <div class="part-title">
+                        <i class="icon icon2"></i>托管矿井产量
+                        </br><em><!--Output Of Coal--></em>
+                    </div>
+                    <div class="part-content">
+                        <iframe name="frame2" id="frame2" width="100%" scrolling="no" src="./托管矿井产量.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+                    </div>
+                </div>
+
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon3"></i>煤炭库存</br><em><!--Output Of Coal--></em></div>
+                    <div class="part-content">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./煤炭产量.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+
+                    </div>
+                </div>
+
+            </div>
+            <!--中间列-->
+            <div class="middle part">
+                <!--地区分布图-->
+                <div class="part3">
+                    <div class="part-title map-title animated slideInDown"><i class="icon icon8"></i></br><em><!--Map--></em></div>
+                    <!--数据-->
+                    <div class="map-data animated slideInDown">
+                        <ul class="data-ul">
+                            <li><span class="data-title">煤炭产量</span><span><label id="cl">569</label><i>万吨</i></span></li>
+                            <li><span class="data-title">煤炭销量</span><span><label id="xl">569</label><i>万吨</i></span></li>
+                            <li><span class="data-title">煤炭库存</span><span><label id="kc">569</label><i>万吨</i></span></li>
+                        </ul>
+                    </div>
+                    <!--颜色提示-->
+                    <div class="map-tip animated slideInLeft">
+                        <ul>
+                            <li><i class="red">红色</i><span>网络中断</span></li>
+                            <li><i class="orange">橙色</i><span>通讯报警</span></li>
+                            <!--<li><i class="yellow">黄色</i><span>通讯故障</span></li>-->
+                            <li><i class="green">绿色</i><span>通讯正常</span></li>
+                        </ul>
+                    </div>
+                    <!--地图展示-->
+                    <div class="map animated slideInRight" style="margin-top: 90px;width: 400px;height: 400px;">
+                        <span class="name name1">山西</span>
+                        <span class="name name2">山东</span>
+                        <span class="kname1 kname"><i class="animated pulse infinite" id="m10702003"></i>大恒煤业</span>
+                        <span class="kname2 kname"><i class="animated pulse infinite" id="m10702029"></i>望田煤业</span>
+                        <span class="kname3 kname"><i class="animated pulse infinite" id="m10702001"></i>梁家煤矿</span>
+                        <span class="kname4 kname"><i class="animated pulse infinite" id="m10702028"></i>李楼煤业</span>
+                    </div>
+
+                    <!--收入和利润占比-->
+                    <div class="chart1 animated slideInLeft" style="height:260px;width: 410px">
+                        <div class="ctitle">
+                            <i class="icon icon9"></i>收入和利润占比
+                            </br><em><!--Income and Profit--></em>
+                        </div>
+
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./收入和利润占比.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="220"></iframe>
+                    </div>
+                </div>
+
+                <!--底部-->
+                <!--<div class="part part1 animated slideInLeft">
+                    <div class="part-title">
+                        <i class="icon icon4"></i>开机率
+                        </br><em>Turn-on Ratio</em>
+                    </div>
+                    <div>
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./开机率.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+
+                    </div>
+                </div>
+                <div class="part part1 animated slideInRight">
+                    <div class="part-title"><i class="icon icon5"></i>矿井井下工作人数</br><em>Number Of Underground Workers</em></div>
+                    <div>
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./井下工作人员.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+
+                    </div>
+                </div>-->
+
+            </div>
+            <!--右边列2-->
+            <div class="right animated slideInRight">
+                <div class="part part1">
+                    <div class="part-title" style="height:20px">
+                        <i class="icon icon10"></i>值班领导
+                        </br><em><!--Duty Leader--></em>
+                    </div>
+                    <div class="part-title" style="padding: 0;height: 30px;"><span>集团公司值班领导</span></div>
+                    <div>
+
+                        <ul class="pcont">
+                            <li id="zbld" style="color:#abcbff"></li>
+                            <!--<li id="zbzcy"></li>-->
+                        </ul>
+
+                        <!--<div id="scrollDiv" style="height: 230px;overflow: hidden; display:none">
+                            <ul class="pcont" id="eveMindLeader">
+                                <li><a></a>梁家煤矿</li>
+                                <li>值班矿长：刘志</li>
+                                <li>值班领导：王石峰</li>
+                                <li>望田煤矿</li>
+                                <li>值班矿长：张斌</li>
+                                <li>值班领导：陈勇</li>
+                                <li>龙郓煤矿</li>
+                                <li>值班矿长：王强</li>
+                                <li>值班领导：杨林</li>
+                                <li>大恒煤矿</li>
+                                <li>值班矿长：刘磊</li>
+                                <li>值班领导：陈建伟</li>
+                            </ul>
+                        </div>-->
+                    </div>
+                    <div class="part-title" style="padding: 0;height: 30px;"><span>各单位值班领导</span></div>
+                    <div>
+
+                        <!--<ul class="pcont" id="eveMindLeader">
+                        </ul>-->
+                        <table style="width: 100%;  float: left;    margin-left: 10px;    font-size: 14px;" cellpadding="0">
+
+                            <tbody id="otherLeaders"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="part part1">
+
+                    <div class="part-title"><i class="icon icon6"></i>当前下井人数</br><em><!--Current Number Of People In The Well--></em></div>
+                    <div class="part-content">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./当前下井人数.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+
+                    </div>
+                </div>
+                <div class="part part1">
+
+                    <div class="part-title"><i class="icon icon7"></i>工作时长</br><em><!--The Important Test Point--></em></div>
+                    <div class="part-content">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./工作时长.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+                    </div>
+                </div>
+
+
+            </div>
+            <!--右边列1-->
+            <div class="right animated slideInRight">
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon6"></i>近三日数据传输中断记录</br><em><!--Data Transmission Interruption Record Wthin 3Days--></em></div>
+                    <div class="part-content">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./近三日数据传输中断记录.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+
+                    </div>
+                </div>
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon6"></i>各矿监控测点统计</br><em><!--Monitoring Points Of Each Mine--></em></div>
+                    <div class="part-content">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./各矿监控测点统计.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="100%"></iframe>
+
+                    </div>
+                </div>
+                <div class="part part1">
+                    <div class="part-title"><i class="icon icon7"></i>开机率</br><em><!--Turn-on Ratio--></em></div>
+                    <div class="part-content">
+                        <iframe name="frame1" id="frame1" width="100%" scrolling="no" src="./开机率2.html"
+                                marginheight="0" framespacing="0" frameborder="0" height="90%"></iframe>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+    <script type="text/javascript">
+        //产量 销量 库存
+        $.ajax({
+            url: httpIP + "CariLongKouAttemper/api/screen/GetCurrentCoalDataByDate?mineCode=0&date=" + getTargetDate(0, '-'),
+            //contentType: "text/plain",
+            dataType: "JSON",
+            headers: {
+                "userid": $.cookie('user_token')
+            },
+            type: "GET",
+            async: false,
+            success: function (data) {
+
+                $("#cl").html(Math.round(data.productionAmount / 10000));
+                $("#xl").html(Math.round(data.salesAmount / 10000));
+                $("#kc").html(Math.round(data.stockAmount / 10000));
+
+            }, error: function (e) {
+                console.log(e.responseText);
+                //var res = $.parseJSON(e.responseText);
+                //layer.msg(res.ExceptionMessage);
+            }
+        });
+        //值班领导
+        $.ajax({
+            url: httpIP + "CariLongKouAttemper/api/screen/GetDutyInfo?mineCode=0&dateTime=" + getCurrentDate(),
+            //contentType: "text/plain",
+            dataType: "JSON",
+            headers: {
+                "userid": $.cookie('user_token')
+            },
+            type: "GET",
+            async: false,
+            success: function (data) {
+                //集团领导
+                $("#zbld").html(data.dutyLeader + ',' + data.dutyGrouper);
+                var eveMinLeaderHtml = "";
+                //for (var i = 0; i < data.mineDutyList.length; i++) {
+                //    eveMinLeaderHtml += "<li><label style='color:#abcbff;font-size:18px;'>" + data.mineDutyList[i].mineName +"</label>：" + data.mineDutyList[i].dutyLeader+ "</li>";
+                //    //eveMinLeaderHtml += "<li>值班领导：" + data.mineDutyList[i].dutyLeader + "</li>";
+                //    //eveMinLeaderHtml += "<li>带班领导：" + data.mineDutyList[i].shiftLeader + "</li>";
+                //    //eveMinLeaderHtml += "<li>跟班人员：" + data.mineDutyList[i].dutyGrouper + "</li>";
+                //}
+                for (var i = 0; i < data.mineDutyList.length; i++) {
+
+                    if (i % 2 == 0) {
+                        eveMinLeaderHtml += "<tr><td style='color:#abcbff'>" + data.mineDutyList[i].mineName.replace('项目部', '') + "：</td><td style='color:white'>" + data.mineDutyList[i].dutyLeader.replace('值班领导', '') + "</td><td style='color:#abcbff'>" + data.mineDutyList[i + 1].mineName.replace('项目部', '') + "：</td><td style='color:white'>" + data.mineDutyList[i + 1].dutyLeader.replace('值班领导', '') + "</td></tr>";
+                    }
+                }
+                $("#otherLeaders").html(eveMinLeaderHtml);
+            }, error: function (e) {
+                console.log(e.responseText);
+                //var res = $.parseJSON(e.responseText);
+                //layer.msg(res.ExceptionMessage);
+            }
+        });
+        //信号状态
+        function ShowMineStatus() {
+            var code = 1;
+            $.ajax({
+                url: httpIP + "api/api/RealNetState",
+                dataType: "JSON",
+                headers: {
+                    "userid": $.cookie('user_token')
+                },
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    for (var i = 0; i < data.Data.length; i++) {
+                        var className = "";
+                        var rel = data.Data[i];
+                        if (rel.State == 0) {
+                            className = "shake2";
+                        } else if (rel.State == 1) {
+                            className = "shake3";
+                        }
+                        else if (rel.State == 2) {
+                            className = "shake4";
+                        }
+                        $("#m" + rel.MineCode).addClass(className);
+                    }
+                }, error: function (e) {
+                    console.log(e.responseText);
+                }
+            });
+        }
+        ShowMineStatus();
+
+
+        //消息通知
+        $.ajax({
+            url: httpIP + "/SafetyNet2WebApi/api/common/Notifications",
+            dataType: "JSON",
+            headers: {
+                "userid": $.cookie('user_token')
+            },
+            type: "GET",
+            async: false,
+            success: function (data) {
+                var inHtml = "";
+                //<li style="margin-top: -1.79788px;"><a>关于科级及以下管理人员“三考一评”能力考试补考的通知</a></li>
+                //    <li style="margin-top: 0px;"><a>转发山东能源安传（2019）81号文件认真做好地质灾害防治工作的通知</a></li>
+                //    <li style="margin-top: 0px;"><a>转发鲁煤监政法[2019]36号《山东煤矿双重预防机制建设持续推进工作方案》的通知</a></li>
+                for (var i = 0; i < data.Data.length; i++) {
+                    if (i == 0) {
+                        inHtml += "<li style=\"margin-top: -1.79788px;\"><a href='" + data.Data[i].Path + "' target='_blank'>" + data.Data[i].Title + "</a></li>";
+                    } else {
+                        inHtml += "<li><a href='" + data.Data[i].Path + "'  target='_blank'>" + data.Data[i].Title + "</a></li>";
+                    }
+                }
+                $("#message").append(inHtml);
+            }, error: function (e) {
+                console.log(e.responseText);
+            }
+        });
+    </script>
+</body>
+
+</html>

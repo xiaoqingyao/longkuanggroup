@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+    <meta charset="utf-8">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="Content/bootstrap.min.css" />
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="Scripts/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="Scripts/bootstrap.min.js">
+    </script>
+    <script type="text/javascript" src="Scripts/echarts.min.js"></script>
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/config.js"></script>
+    <script src="Scripts/dateHelper.js"></script>
+    <style>
+        #datebtn {
+            opacity: .5;
+        }
+    </style>
+</head>
+
+<body style="height: 100%;width:100%; background: transparent;">
+    <div id="container"></div>
+
+    <script type="text/javascript">
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+        function resizeWorldMapContainer(dom) {
+            dom.style.width = window.innerWidth  + 'px';
+            dom.style.height = window.innerHeight-20 + 'px';
+        };
+        var customeColor = 'white';
+        var color = getQueryString('c');
+        if (!!color) {
+            customeColor = color;
+        }
+
+        var dom = document.getElementById("container");
+        //初始化大小
+        resizeWorldMapContainer(dom);
+        var myChart = echarts.init(dom);
+        //绑定跟窗口同步事件
+        window.onresize = function () {
+            //重置容器高宽
+            resizeWorldMapContainer();
+            myChart.resize();
+        };
+        option = {
+            title: {
+                text: '单位: 分钟',
+                textStyle: {
+                    fontSize: '12',
+                    color: customeColor,
+                    fontFamily: '微软雅黑',
+                },
+                left: '10',
+                top:10
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {
+                data: ['本月平均值', '昨日平均值'],
+                right: '5',
+                textStyle: {
+                    fontSize: '12',
+                    color: customeColor,
+                    fontFamily: '微软雅黑',
+                },
+                itemGap: 40,
+                itemWidth: 16
+            },
+            color: ['#54D4A4', '#23AAEC'],
+
+            grid: {
+                left: '20%', right: '4%', bottom: '10%', top: "15%"
+            },
+            xAxis: {
+                type: 'value',
+                boundaryGap: [0, 0.01],
+                axisLine: {
+                    lineStyle: {
+                        color: customeColor,
+                    }
+                },
+                axisTick: {
+                    lineStyle: {
+                        color: customeColor,
+                    }
+                }
+            },
+            yAxis: {
+                type: 'category',
+                data: ['梁家煤矿', '大恒煤业', '李楼煤业', '望田煤矿'],
+                axisLine: {
+                    lineStyle: {
+                        color: customeColor,
+                    }
+                },
+                axisTick: {
+                    alignWithLabel: true,
+                    lineStyle: {
+                        color: customeColor,
+                    }
+                },
+            },
+            series: [
+                {
+                    name: '昨日平均值',
+                    type: 'bar',
+                    data: [320, 380, 260, 320]
+                },
+                {
+                    name: '本月平均值',
+                    type: 'bar',
+                    data: [460, 630, 500, 600]
+                }
+            ]
+        };
+        $.ajax({
+            url: httpIP + "TDRJNetWebApi/api/longkou/AvgWorkTime/getData?dept=%E5%85%A8%E9%83%A8",
+            dataType: "JSON",
+            headers: {
+                "userid": $.cookie('user_token')
+            },
+            type: "GET",
+            async: false,
+            success: function (data) {
+                var lastDay = data.Data.LastDayResponseData;
+                var month = data.Data.MonthResponseData;
+                option.yAxis.data = [];
+                option.series = [];
+
+                var arrLastDayObj = [];
+                var arrMonthObj = [];
+                for (var i = 0; i < lastDay.length; i++) {
+                    option.yAxis.data.push(lastDay[i].name);
+
+                    arrLastDayObj.push(lastDay[i].value);
+                    arrMonthObj.push(month[i].value);
+                }
+                var objlastDay = {};
+                objlastDay.name = '昨日平均值';
+                objlastDay.type = 'bar';
+                objlastDay.data = arrLastDayObj;
+                option.series[0] = objlastDay;
+
+                var objMonth = {};
+                objMonth.name = '本月平均值';
+                objMonth.type = 'bar';
+                objMonth.data = arrMonthObj;
+                option.series[1] = objMonth;
+            }, error: function (e) {
+                console.log(e.responseText);
+            }
+        });
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+
+
+    </script>
+</body>
+
+</html>

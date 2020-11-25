@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <!--<link rel="stylesheet" href="Content/bootstrap.min.css">-->
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="Scripts/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <!--<script src="Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Scripts/echarts.min.js"></script>-->
+
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/config.js"></script>
+    <script src="Scripts/dateHelper.js"></script>
+    <title></title>
+    <meta charset="utf-8" />
+    <style>
+        body {
+            color: white;
+            text-align: center;
+        }
+
+
+        .tabBody {
+            border: 2px solid #1184B8;
+            border-top: 0px;
+            /*height: 40px;
+            margin-bottom: 30px;*/
+        }
+
+        table {
+        }
+
+            table thead th {
+                background-color: #0E2956;
+                text-align: center;
+                color: white;
+            }
+
+            table th, td {
+                border: 1px solid #116190;
+                text-align: center;
+                /*height: 50px;*/
+                font-size: 10px;
+            }
+    </style>
+</head>
+<body>
+    <table cellspacing="0" cellpadding="0" border="0" style="height: 232px;width:100%;margin-top: 27px;">
+        <thead>
+            <tr>
+                <th>煤矿</th>
+                <th>测点名称</th>
+                <th>当日累计</th>
+                <th>开机率</th>
+                <th>当月累计</th>
+                <th>开机率</th>
+
+            </tr>
+        </thead>
+        <tbody id="content">
+         
+        </tbody>
+    </table>
+    <script type="text/javascript">
+        $.ajax({
+            url: httpIP + "api/api/GetTurnOnRateStatics",
+            dataType: "JSON",
+            headers: {
+                "userid": $.cookie('user_token')
+            },
+            type: "GET",
+            async: false,
+            success: function (data) {
+                
+                for (var i = 0; i < data.Data.length; i++) {
+
+                    let num = parseFloat(data.Data[i].DayRunRate);
+                    let DayRunRate = num.toFixed(2);
+                    DayRunRate = DayRunRate + '%'
+
+                    let num2 = parseFloat(data.Data[i].MonthRunRate);
+                    let MonthRunRate = num2.toFixed(2);
+                    MonthRunRate = MonthRunRate + '%'
+
+
+                    var tdHtml = "";
+                    if (i % 2 == 0) {
+                        var mname = data.Data[i].MineName.substring(0, 2);
+                        tdHtml += "<td rowspan=\"2\">" + mname + "</td>";
+                    }
+                    var pname = data.Data[i].PointName.replace('采煤机开停', '');
+                    tdHtml += "<td >" + pname + "</td>";
+
+                    var drun = data.Data[i].DayRun.replace('小', '').replace('秒', '');
+                    drun = drun.split("分")[0]+"分";
+                    
+
+                    tdHtml += "<td >" + drun + "</td>";
+                    tdHtml += "<td >" + DayRunRate + "</td>";
+
+                    var mrun = data.Data[i].MonthRun.replace('小', '').replace('秒', '');
+                    mrun = mrun.split("分")[0] + "分";
+                    tdHtml += "<td >" + mrun + "</td>";
+                    tdHtml += "<td >" + MonthRunRate + "</td>";
+
+                    tdHtml = "<tr >" + tdHtml + "</tr>";
+                   
+                    $("#content").append(tdHtml);
+                }
+            
+               
+
+            }, error: function (e) {
+                console.log(e.responseText);
+            }
+        });
+    </script>
+</body>
+</html>

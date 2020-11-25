@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="Content/bootstrap.min.css">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="Scripts/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="Scripts/bootstrap.min.js">
+    </script>
+    <script type="text/javascript" src="Scripts/echarts.min.js"></script>
+
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/config.js"></script>
+    <script src="Scripts/dateHelper.js"></script>
+</head>
+
+<body style="background-color: transparent;">
+    <div id="container" style="margin: 0 auto;margin-top:10px;">
+    </div>
+    <script type="text/javascript">
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+        function resizeWorldMapContainer(dom) {
+            dom.style.width = window.innerWidth + 'px';
+            dom.style.height = window.innerHeight-20 + 'px';
+        };
+        var color = 'white';
+        var customeColor = getQueryString('c');
+        if (!!customeColor) {
+            color = customeColor;
+        }
+
+        var dom = document.getElementById("container");
+        //初始化大小
+        resizeWorldMapContainer(dom);
+        var myChart = echarts.init(dom);
+        //绑定跟窗口同步事件
+        window.onresize = function () {
+            //重置容器高宽
+            resizeWorldMapContainer();
+            myChart.resize();
+        };
+        var option = {
+            title: {
+                subtextStyle: {
+                    color: color,
+                    fontSize: '15',
+                    fontFamily: '微软雅黑',
+                },
+                right: 0,
+                top: 20
+            },
+            grid: [{
+                left: '0%', right: '0%', bottom: '0%', top: "0%"
+
+            },],
+            tooltip: {
+                trigger: 'item',
+                formatter: function (params) {
+                    return params.name.split('_')[0] + ' ' + params.value + '人';
+                }
+            },
+            legend: {
+                x: 'left',
+                y: 'top',
+                itemHeight: 10,
+                itemWidth: 10,
+                orient: 'horizontal',
+                left: 5,
+                top: 5,
+                itemGap: 10,
+                textStyle: {
+                    color: color
+
+                }
+            },
+            color: ['#d87a80', '#8d98b3', '#e5cf0d', '#97b552'],
+            series: [{
+                name: '当前下井人数',
+                type: 'pie',
+                radius: ['35', '60'],
+                center: [155, 165],
+                label: {
+                    normal: {
+                        formatter: function (params) {
+                            return params.name.split('_')[0].substring(0,2) + '：' + params.value + '人';
+                        },
+                        textStyle: {
+                            fontSize: '13',
+                            color: color
+                        }
+                    }
+                },
+                labelLine: {
+                    lineStyle: {
+                        color: color
+                    }
+                },
+            }]
+        };
+        var legend_data = [
+            {
+                name: '梁家煤矿',
+                icon: 'circle'
+            },
+            {
+                name: '大恒煤矿',
+                icon: 'circle'
+            },
+            {
+                name: '望田煤矿',
+                icon: 'circle'
+            },
+            {
+                name: '李楼煤矿',
+                icon: 'circle'
+            }
+        ];
+        var series_data = [{
+            value: 20.5,
+            name: '梁家煤矿',
+        },
+        {
+            value: 35,
+            name: '大恒煤矿',
+        },
+        {
+            value: 15,
+            name: '望田煤矿',
+        },
+        {
+            value: 30,
+            name: '李楼煤矿',
+        }
+        ];
+        $.ajax({
+            url: httpIP + "/tdrjnetwebapi/api/longkou/MineDownPerson/getData",
+            dataType: "JSON",
+            headers: {
+                "userid": $.cookie('user_token')
+            },
+            type: "GET",
+            async: false,
+            success: function (data) {
+                legend_data = [];
+                series_data = [];
+                for (var i = 0; i < data.Data.List.length; i++) {
+                    var dt = data.Data.List[i];
+                    var legendObj = {};
+                    legendObj.name = dt.name;
+                    legendObj.icon ="circle";
+                    legend_data.push(legendObj);
+                    var seriesObj = {};
+                    seriesObj.name = dt.name;
+                    seriesObj.value = dt.value;
+                    series_data.push(seriesObj);
+                }
+            }, error: function (e) {
+                console.log(e.responseText);
+            }
+        });
+        if (option && typeof option === "object") {
+            option.series[0].data = series_data;
+            option.legend.data = legend_data;
+            myChart.setOption(option);
+        }
+    </script>
+</body>
+
+</html>
